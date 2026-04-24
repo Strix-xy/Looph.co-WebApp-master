@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block title %}Product — loophco{% endblock %}
+{% block content %}
+<div class="page" id="page-product_detail">
+  <div class="pd-wrap">
+    <div class="pd-grid">
+      <div class="pd-imgs">
+        <img class="pd-main-img" id="pdMainImage" src="{{ product.image_url }}" alt="{{ product.name }}">
+      </div>
+      <div class="pd-info">
+        <div class="pd-bc">
+          <a href="{{ url_for('main.index') }}">Home</a><span class="sep">›</span>
+          <a href="{{ url_for('customer.shop') }}">Shop</a><span class="sep">›</span>
+          <span style="color:var(--text2)">{{ product.name }}</span>
+        </div>
+        <h1 class="pd-name">{{ product.name }}</h1>
+        <div class="pd-price-box"><span class="pd-price">₱{{ '%.2f'|format(product.price) }}</span></div>
+        <div class="pd-rat-box">
+          <span style="font-size:.8rem;color:var(--text2)">{{ reviews|length }} review(s)</span>
+          <span style="font-size:.7rem;color:{{ 'var(--red)' if product.stock < 5 else 'var(--green)' }}">
+            {% if product.stock < 5 %}Only {{ product.stock }} left{% else %}In stock{% endif %}
+          </span>
+        </div>
+        <p class="pd-desc">{{ product.description }}</p>
+        <div class="pd-ctas">
+          <button class="btn btn-p" onclick="addProductToCart({{ product.id }})">Add to Cart</button>
+          <button class="btn btn-g" onclick="toggleWishlist({{ product.id }}, this)">{% if in_wishlist %}Wishlisted{% else %}Add to Wishlist{% endif %}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pd-reviews">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;margin-bottom:.4rem">Customer Reviews</h3>
+      {% if session.get('user_id') %}
+      <div class="rv-card" style="margin-bottom:1rem">
+        <p class="rv-author">Write a Review</p>
+        <div style="display:flex;gap:.4rem;align-items:center;margin:.5rem 0" id="ratingStars">
+          <button type="button" class="btn btn-g btn-sm" data-star="1" onclick="setReviewRating(1)">★</button>
+          <button type="button" class="btn btn-g btn-sm" data-star="2" onclick="setReviewRating(2)">★</button>
+          <button type="button" class="btn btn-g btn-sm" data-star="3" onclick="setReviewRating(3)">★</button>
+          <button type="button" class="btn btn-g btn-sm" data-star="4" onclick="setReviewRating(4)">★</button>
+          <button type="button" class="btn btn-g btn-sm" data-star="5" onclick="setReviewRating(5)">★</button>
+        </div>
+        <input type="hidden" id="ratingInput" value="5">
+        <textarea id="reviewComment" class="pp-input" placeholder="Share your experience..." style="width:100%;min-height:100px"></textarea>
+        <button class="btn btn-p btn-sm" style="margin-top:.75rem" onclick="submitReview({{ product.id }})">Submit Review</button>
+      </div>
+      {% endif %}
+      <div class="reviews-grid">
+        {% for review in reviews %}
+        <div class="rv-card">
+          <div class="rv-hd">
+            <div>
+              <p class="rv-author">{{ review.user.username }}</p>
+              <p class="rv-date">{{ review.created_at.strftime('%b %d, %Y') }}</p>
+            </div>
+            <p class="rv-author">{{ review.rating }}/5</p>
+          </div>
+          <p class="rv-text">{{ review.comment or '' }}</p>
+        </div>
+        {% else %}
+        <p style="color:var(--text3)">No reviews yet for this product.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  async function addProductToCart(productId) {
+    const res = await fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product_id: productId, quantity: 1 })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showToast('Added to cart', 'ok');
+      if (typeof refreshServerCartUI === 'function') refreshServerCartUI();
+    } else {
+      showToast(data.error || 'Failed to add to cart', 'err');
+    }
+  }
+
+  async function toggleWishlist(productId, btn) {
+    const res = await fetch(`/wishlist/toggle/${productId}`, { method: 'POST' });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      btn.textContent = data.in_wishlist ? 'Wishlisted' : 'Add to Wishlist';
+      showToast(data.in_wishlist ? 'Added to wishlist' : 'Removed from wishlist', 'ok');
+    } else {
+      showToast(data.error || 'Unable to update wishlist', 'err');
+    }
+  }
+
+  async function submitReview(productId) {
+    const rating = parseInt(document.getElementById('ratingInput').value, 10);
+    const comment = document.getElementById('reviewComment').value;
+    const res = await fetch(`/product/${productId}/review`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rating, comment })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast('Review submitted', 'ok');
+      window.location.reload();
+    } else {
+      showToast(data.error || 'Failed to submit review', 'err');
+    }
+  }
+  function setReviewRating(value) {
+    document.getElementById('ratingInput').value = String(value);
+    document.querySelectorAll('#ratingStars [data-star]').forEach((btn) => {
+      btn.classList.toggle('btn-p', parseInt(btn.dataset.star, 10) <= value);
+      btn.classList.toggle('btn-g', parseInt(btn.dataset.star, 10) > value);
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => setReviewRating(5));
+</script>
+{% endblock %}

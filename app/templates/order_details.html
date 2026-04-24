@@ -1,0 +1,281 @@
+{% extends 'base.html' %} {% block title %}Order {{ order.id }} — loophco{%
+endblock %} {% block content %}
+<div class="page" id="page-order-details">
+  <div
+    style="
+      max-width: 900px;
+      margin: 0 auto;
+      padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+    "
+  >
+    <a
+      href="{{ url_for('customer.profile') }}"
+      style="
+        font-size: 0.75rem;
+        color: var(--accent);
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+      "
+      >← Back to Profile</a
+    >
+
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      "
+    >
+      <div>
+        <h1 class="admin-pg-title" style="margin-bottom: 0.5rem">
+          Order #{{ order.id }}
+        </h1>
+        <p class="admin-sub" style="margin-bottom: 1.5rem">
+          Reference: ORD-{{ order.id }}
+        </p>
+
+        <div
+          style="
+            background: var(--bg2);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+          "
+        >
+          <p
+            style="
+              font-size: 0.75rem;
+              color: var(--text3);
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              margin-bottom: 0.75rem;
+            "
+          >
+            Status
+          </p>
+          <p
+            style="
+              font-size: 1.1rem;
+              font-weight: 500;
+              color: var(--accent);
+              text-transform: capitalize;
+            "
+          >
+            {{ order.status|replace('_',' ') }}
+          </p>
+        </div>
+
+        <div
+          style="background: var(--bg2); padding: 1.5rem; border-radius: 6px"
+        >
+          <p
+            style="
+              font-size: 0.75rem;
+              color: var(--text3);
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              margin-bottom: 0.75rem;
+            "
+          >
+            Order Date
+          </p>
+          <p style="font-size: 0.95rem">
+            {{ order_dict.created_at_display or 'N/A' }}
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h3
+          style="
+            font-size: 0.85rem;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1rem;
+          "
+        >
+          Customer Information
+        </h3>
+        <div
+          style="background: var(--bg2); padding: 1.5rem; border-radius: 6px"
+        >
+          <p style="margin-bottom: 0.5rem">
+            <strong>{{ order.customer_name }}</strong>
+          </p>
+          <p
+            style="
+              font-size: 0.9rem;
+              color: var(--text3);
+              margin-bottom: 0.5rem;
+            "
+          >
+            {{ order.customer_email }}
+          </p>
+          <p style="font-size: 0.9rem; color: var(--text3)">
+            {{ order.customer_address }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="
+        background: var(--bg2);
+        padding: 2rem;
+        border-radius: 6px;
+        margin-bottom: 2rem;
+      "
+    >
+      <h3
+        style="
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          margin-bottom: 1.5rem;
+        "
+      >
+        Order Items
+      </h3>
+
+      <div class="cart-tbl-hd" style="margin-bottom: 1rem">
+        <span>Product</span>
+        <span>Price</span>
+        <span>Qty</span>
+        <span>Total</span>
+      </div>
+
+      {% for item in order_items %}
+      <div
+        style="
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 1fr;
+          gap: 1rem;
+          align-items: center;
+          padding: 1rem 0;
+          border-bottom: 1px solid var(--border);
+        "
+      >
+        <div style="display: flex; gap: 1rem; align-items: center">
+          <div
+            style="
+              width: 60px;
+              height: 60px;
+              background: var(--bg);
+              border-radius: 4px;
+              overflow: hidden;
+            "
+          >
+            {% if item.image_url %}
+            <img
+              src="{{ item.image_url }}"
+              alt="{{ item.product_name }}"
+              style="width: 100%; height: 100%; object-fit: cover"
+            />
+            {% else %}
+            <div
+              style="width: 100%; height: 100%; background: var(--bg3)"
+            ></div>
+            {% endif %}
+          </div>
+          <div>
+            <p style="font-weight: 500">{{ item.product_name }}</p>
+            <p style="font-size: 0.85rem; color: var(--text3)">
+              {{ item.category or 'Uncategorized' }}
+            </p>
+          </div>
+        </div>
+        <span>₱{{ '%.2f'|format(item.price) }}</span>
+        <span>{{ item.quantity }}</span>
+        <span>₱{{ '%.2f'|format(item.price * item.quantity) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem">
+      <div></div>
+      <div>
+        <h3
+          style="
+            font-size: 0.85rem;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 1rem;
+          "
+        >
+          Order Summary
+        </h3>
+        <div
+          style="background: var(--bg2); padding: 1.5rem; border-radius: 6px"
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 0.75rem;
+              padding-bottom: 0.75rem;
+              border-bottom: 1px solid var(--border);
+            "
+          >
+            <span>Subtotal</span>
+            <span>₱{{ '%.2f'|format(order.subtotal) }}</span>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 0.75rem;
+              padding-bottom: 0.75rem;
+              border-bottom: 1px solid var(--border);
+            "
+          >
+            <span>Shipping</span>
+            <span>₱{{ '%.2f'|format(order.shipping_fee) }}</span>
+          </div>
+          {% if order.voucher_discount and order.voucher_discount > 0 %}
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 0.75rem;
+              padding-bottom: 0.75rem;
+              border-bottom: 1px solid var(--border);
+              color: var(--green);
+            "
+          >
+            <span>Voucher Discount</span>
+            <span>-₱{{ '%.2f'|format(order.voucher_discount) }}</span>
+          </div>
+          {% endif %}
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-weight: 600;
+              font-size: 1.1rem;
+            "
+          >
+            <span>Total</span>
+            <span>₱{{ '%.2f'|format(order.total_amount) }}</span>
+          </div>
+          <p
+            style="
+              font-size: 0.8rem;
+              color: var(--text3);
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 1px solid var(--border);
+            "
+          >
+            <strong>Payment Method:</strong> {{
+            order.payment_method|upper|replace('_',' ') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

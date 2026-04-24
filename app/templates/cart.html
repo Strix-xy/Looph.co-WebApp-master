@@ -1,0 +1,306 @@
+{% extends 'base.html' %} {% block title %}Cart — loophco{% endblock %} {% block
+content %}
+<div class="page" id="page-cart">
+  <div class="cart-page" style="padding-top: var(--nav-h)">
+    <div
+      style="
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem clamp(1.5rem, 4vw, 3rem);
+      "
+    >
+      <div class="cart-pg-inner">
+        <div class="cart-items-col" id="cartItemsCol">
+          <h2 class="cart-pg-title">
+            Cart
+            <span
+              style="
+                font-family: &quot;DM Mono&quot;, monospace;
+                font-size: 1rem;
+                color: var(--text3);
+              "
+              >({{ cart_items|length }} items)</span
+            >
+          </h2>
+          {% if cart_items %}
+          <div class="cart-tbl-hd">
+            <span>Product</span><span>Price</span><span>Qty</span
+            ><span>Total</span><span></span>
+          </div>
+          {% for cart_item, product in cart_items %}
+          <div class="cart-row">
+            <div class="ctr-prod">
+              <div class="ctr-thumb">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" />
+              </div>
+              <div>
+                <p class="ctr-name">{{ product.name }}</p>
+                <p class="ctr-meta">{{ product.category }}</p>
+              </div>
+            </div>
+            <span class="ctr-price">₱{{ '%.2f'|format(product.price) }}</span>
+            <div class="ci-qrow" data-cart-id="{{ cart_item.id }}">
+              <button
+                class="ci-qb"
+                onclick="updateCartQty({{ cart_item.id }}, -1)"
+              >
+                −
+              </button>
+              <span class="ci-qn">{{ cart_item.quantity }}</span>
+              <button
+                class="ci-qb"
+                onclick="updateCartQty({{ cart_item.id }}, 1)"
+              >
+                +
+              </button>
+            </div>
+            <span class="ctr-total"
+              >₱{{ '%.2f'|format(product.price * cart_item.quantity) }}</span
+            >
+            <button class="ctr-rm" onclick="removeCartItem({{ cart_item.id }})">
+              ✕
+            </button>
+          </div>
+          {% endfor %} {% else %}
+          <div style="text-align: center; padding: 4rem 1rem">
+            <p
+              style="
+                font-family: &quot;Cormorant Garamond&quot;, serif;
+                font-size: 1.8rem;
+                font-weight: 300;
+                margin-bottom: 1rem;
+              "
+            >
+              Your cart is empty
+            </p>
+            <a class="btn btn-p" href="{{ url_for('customer.shop') }}"
+              >Browse Collection</a
+            >
+          </div>
+          {% endif %}
+        </div>
+        <div class="cart-sum-col" id="cartSumCol">
+          <h3 class="smr-title">Order Summary</h3>
+          <div class="smr-row">
+            <span>Subtotal</span
+            ><span id="checkoutSubtotal"
+              >₱{{ '%.2f'|format(total_subtotal) }}</span
+            >
+          </div>
+          <div class="smr-row">
+            <span>Shipping</span><span>TBD at checkout</span>
+          </div>
+          <div class="smr-row" id="checkoutVoucherRow" style="display: none">
+            <span>Voucher Discount</span
+            ><span id="checkoutVoucherDiscount" style="color: var(--green)"
+              >-₱0.00</span
+            >
+          </div>
+          <div class="smr-row tot">
+            <span>Total</span
+            ><span id="checkoutTotal"
+              >₱{{ '%.2f'|format(total_subtotal) }}</span
+            >
+          </div>
+          <div style="margin-top: 1rem">
+            <input
+              id="checkoutAddress"
+              class="coupon-in"
+              style="margin-bottom: 0.5rem; width: 100%"
+              placeholder="Delivery address"
+              value="{{ display_address or '' }}"
+            />
+            <select
+              id="checkoutPaymentMethod"
+              class="pp-input"
+              style="width: 100%; margin-bottom: 0.5rem"
+            >
+              <option value="cod">Cash on Delivery</option>
+              <option value="gcash">GCash</option>
+            </select>
+            <div style="display: flex; gap: 0.5rem">
+              <input
+                id="checkoutVoucherCode"
+                class="coupon-in"
+                style="width: 100%"
+                placeholder="Voucher code"
+              />
+              <button
+                class="btn btn-g btn-sm"
+                type="button"
+                onclick="applyCheckoutVoucher()"
+              >
+                Apply
+              </button>
+            </div>
+            <p
+              id="checkoutVoucherMsg"
+              style="
+                font-size: 0.7rem;
+                color: var(--text3);
+                margin-top: 0.35rem;
+              "
+            ></p>
+          </div>
+          <button class="checkout-btn" onclick="submitCheckout()">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <span class="footer-logo" onclick="goToPage('landing')">loophco</span>
+        <p class="footer-desc">
+          Everyday pieces designed to move with you. Minimal, comfortable, and
+          ready for real life. Rooted in North.
+        </p>
+        <div class="footer-soc">
+          <a
+            href="https://www.instagram.com/looph.co/"
+            target="_blank"
+            rel="noopener"
+            >IG</a
+          >
+        </div>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Shop</p>
+        <ul>
+          <li><a onclick="goToPage('shop')">All Products</a></li>
+          <li><a onclick="goToPage('shop')">Shirts</a></li>
+          <li><a onclick="goToPage('shop')">Jackets</a></li>
+          <li><a onclick="goToPage('shop')">Pants</a></li>
+          <li><a onclick="goToPage('shop')">Accessories</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Info</p>
+        <ul>
+          <li><a onclick="goToPage('about')">About loophco</a></li>
+          <li>
+            <a href="{{ url_for('customer.about') }}#sizing-guide"
+              >Sizing Guide</a
+            >
+          </li>
+          <li><a href="{{ url_for('customer.about') }}#returns">Returns</a></li>
+          <li><a href="{{ url_for('customer.about') }}#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Contact</p>
+        <ul>
+          <li><a>support@looph.co</a></li>
+          <li><a>@looph.co</a></li>
+          <li><a>North, Philippines</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <p>© 2026 loophco — All rights reserved.</p>
+      <span>PH · Everyday Essentials</span>
+    </div>
+  </footer>
+</div>
+<script>
+  let checkoutVoucherCode = '';
+  let checkoutVoucherDiscount = 0;
+  const checkoutSubtotal = Number({{ '%.2f'|format(total_subtotal) }}) || 0;
+  async function updateCartQty(cartId, change) {
+    const res = await fetch(`/cart/update/${cartId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ change })
+    });
+    if (res.ok) window.location.reload();
+  }
+  async function removeCartItem(cartId) {
+    const res = await fetch(`/cart/remove/${cartId}`, { method: 'DELETE' });
+    if (!res.ok) {
+      let data = {};
+      try { data = await res.json(); } catch (_) {}
+      showToast(data.error || 'Failed to remove item', 'err');
+      return;
+    }
+    showToast('Item removed from cart', 'ok');
+    window.location.reload();
+  }
+  async function submitCheckout() {
+    const payment_method = document.getElementById('checkoutPaymentMethod').value;
+    const customer_address = document.getElementById('checkoutAddress').value.trim();
+    if (!customer_address) {
+      showToast('Delivery address is required', 'err');
+      return;
+    }
+    const payload = { payment_method, customer_address, delivery_fee: 0, voucher_code: checkoutVoucherCode };
+    if (payment_method === 'gcash') payload.gcash_number = '09123456789';
+    const res = await fetch('/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showToast(data.error || 'Checkout failed', 'err');
+      return;
+    }
+    showToast('Order placed successfully', 'ok');
+    if (data.payment_method === 'gcash') {
+      showToast('Payment confirmation received (GCash)', 'ok');
+    } else if (data.payment_method === 'cod') {
+      showToast('Order set to Cash on Delivery', 'ok');
+    }
+    if (data.voucher_code) {
+      showToast(`Voucher applied: ${data.voucher_code}`, 'ok');
+    }
+    setTimeout(() => window.location.reload(), 600);
+  }
+
+  async function applyCheckoutVoucher() {
+    const codeInput = document.getElementById('checkoutVoucherCode');
+    const msgEl = document.getElementById('checkoutVoucherMsg');
+    const code = (codeInput && codeInput.value ? codeInput.value : '').trim().toUpperCase();
+    if (!code) {
+      checkoutVoucherCode = '';
+      checkoutVoucherDiscount = 0;
+      updateCheckoutSummary();
+      if (msgEl) msgEl.textContent = 'Voucher cleared.';
+      showToast('Voucher cleared', 'ok');
+      return;
+    }
+    const res = await fetch('/cart/voucher/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, subtotal: {{ '%.2f'|format(total_subtotal) }}, delivery_fee: 0 })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.valid) {
+      checkoutVoucherCode = '';
+      checkoutVoucherDiscount = 0;
+      updateCheckoutSummary();
+      if (msgEl) msgEl.textContent = data.error || 'Invalid voucher code.';
+      showToast(data.error || 'Invalid voucher', 'err');
+      return;
+    }
+    checkoutVoucherCode = code;
+    checkoutVoucherDiscount = Number(data.discount_amount || 0);
+    updateCheckoutSummary();
+    if (msgEl) msgEl.textContent = `Voucher ${code} applied. Discount: ₱${Number(data.discount_amount || 0).toLocaleString()}`;
+    showToast(`Voucher ${code} applied`, 'ok');
+  }
+
+  function updateCheckoutSummary() {
+    const row = document.getElementById('checkoutVoucherRow');
+    const discEl = document.getElementById('checkoutVoucherDiscount');
+    const totalEl = document.getElementById('checkoutTotal');
+    const discount = Math.max(0, Number(checkoutVoucherDiscount || 0));
+    const finalTotal = Math.max(0, checkoutSubtotal - discount);
+    if (row) row.style.display = discount > 0 ? '' : 'none';
+    if (discEl) discEl.textContent = `-₱${discount.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `₱${finalTotal.toFixed(2)}`;
+  }
+</script>
+{% endblock %}

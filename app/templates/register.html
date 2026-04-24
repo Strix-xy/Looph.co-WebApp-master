@@ -1,0 +1,195 @@
+{% extends 'base.html' %} {% block title %}Register — loophco{% endblock %} {%
+block content %}
+<div class="page" id="page-register">
+  <div class="auth-wrap">
+    <div class="auth-left">
+      <div class="auth-left-bg">
+        <img
+          src="/static/images/home-1.jpg"
+          alt=""
+          onerror="this.style.opacity = 0"
+        />
+      </div>
+      <div class="auth-left-c">
+        <h2>Join the <em>loophco</em> community.</h2>
+        <p>
+          Get early access to drops, community fit checks, and pieces designed
+          around the way you actually live.
+        </p>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-form">
+        <h3>Create Account</h3>
+        <p class="auth-sub">Join the movement</p>
+        {% if error %}
+        <p style="margin-bottom: 1rem; color: #ff6b6b; font-size: 0.8rem">
+          {{ error }}
+        </p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('auth.register') }}">
+          <div class="form-grp">
+            <label class="form-lbl">Full Name</label>
+            <input
+              type="text"
+              class="form-ctrl"
+              name="full_name"
+              placeholder="Your full name"
+              required
+              autocomplete="name"
+            />
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Username</label>
+            <input
+              type="text"
+              class="form-ctrl"
+              name="username"
+              placeholder="username"
+              required
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Email Address</label>
+            <input
+              type="email"
+              class="form-ctrl"
+              name="email"
+              placeholder="you@gmail.com"
+              required
+              autocomplete="email"
+            />
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Phone Number</label>
+            <input
+              type="tel"
+              class="form-ctrl"
+              name="phone_number"
+              placeholder="09XXXXXXXXX"
+              required
+              autocomplete="tel"
+            />
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Address</label>
+            <input
+              type="text"
+              class="form-ctrl"
+              name="address"
+              placeholder="Street, City, Province"
+              required
+            />
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Password</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center">
+              <input
+                id="regPasswordInput"
+                type="password"
+                class="form-ctrl"
+                name="password"
+                placeholder="Create a password"
+                required
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="btn btn-g btn-sm"
+                id="regShowBtn"
+                onclick="toggleRegPassword()"
+              >
+                Show
+              </button>
+            </div>
+          </div>
+          <div class="form-grp">
+            <label class="form-lbl">Confirm Password</label>
+            <div style="display: flex; gap: 0.5rem; align-items: center">
+              <input
+                id="regConfirmInput"
+                type="password"
+                class="form-ctrl"
+                name="confirm_password"
+                placeholder="Repeat password"
+                required
+                autocomplete="new-password"
+                oninput="checkRegMatch()"
+              />
+              <button
+                type="button"
+                class="btn btn-g btn-sm"
+                id="regConfirmShowBtn"
+                onclick="toggleRegConfirm()"
+              >
+                Show
+              </button>
+            </div>
+            <p
+              id="regMatchMsg"
+              style="
+                font-size: 0.68rem;
+                margin-top: 0.4rem;
+                min-height: 0.9rem;
+                letter-spacing: 0.04em;
+              "
+            ></p>
+          </div>
+          <div class="form-grp">
+            <div
+              class="g-recaptcha"
+              data-sitekey="{{ config.RECAPTCHA_SITE_KEY }}"
+            ></div>
+          </div>
+          <button class="form-submit" type="submit">Create Account</button>
+        </form>
+        <p class="auth-alt">
+          Already have an account?
+          <a href="{{ url_for('auth.login') }}">Sign in →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% block extra_js %}
+<script>
+  function toggleRegPassword() {
+    const input = document.getElementById("regPasswordInput");
+    const btn = document.getElementById("regShowBtn");
+    const isHidden = input.type === "password";
+    input.type = isHidden ? "text" : "password";
+    btn.textContent = isHidden ? "Hide" : "Show";
+    checkRegMatch();
+  }
+  function toggleRegConfirm() {
+    const input = document.getElementById("regConfirmInput");
+    const btn = document.getElementById("regConfirmShowBtn");
+    const isHidden = input.type === "password";
+    input.type = isHidden ? "text" : "password";
+    btn.textContent = isHidden ? "Hide" : "Show";
+  }
+  function checkRegMatch() {
+    const pwd = document.getElementById("regPasswordInput").value;
+    const confirm = document.getElementById("regConfirmInput").value;
+    const msg = document.getElementById("regMatchMsg");
+    if (!confirm) {
+      msg.textContent = "";
+      return;
+    }
+    if (pwd === confirm) {
+      msg.textContent = "✓ Passwords match";
+      msg.style.color = "var(--green)";
+    } else {
+      msg.textContent = "✗ Passwords do not match";
+      msg.style.color = "#ff6b6b";
+    }
+  }
+  // Also check match when typing in password field
+  document.addEventListener("DOMContentLoaded", function () {
+    const pwdInput = document.getElementById("regPasswordInput");
+    if (pwdInput) pwdInput.addEventListener("input", checkRegMatch);
+  });
+</script>
+{% endblock %} {% endblock %}

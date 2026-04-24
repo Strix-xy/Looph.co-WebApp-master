@@ -1,0 +1,141 @@
+{% extends 'base.html' %} {% block title %}POS — loophco Admin{% endblock %} {%
+block content %}
+<div class="page" id="page-admin_pos">
+  <div class="admin-wrap">
+    <div class="admin-sb">
+      <p class="admin-sb-title">Admin Panel</p>
+      <ul class="admin-nav">
+        <li>
+          <a onclick="goToPage('admin_dashboard')"
+            ><svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" /></svg
+            >Dashboard</a
+          >
+        </li>
+        <li>
+          <a onclick="goToPage('admin_inventory')"
+            ><svg viewBox="0 0 24 24">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              /></svg
+            >Inventory</a
+          >
+        </li>
+        <li>
+          <a class="active" onclick="goToPage('admin_pos')"
+            ><svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" /></svg
+            >POS</a
+          >
+        </li>
+        <li>
+          <a onclick="goToPage('admin_vouchers')"
+            ><svg viewBox="0 0 24 24">
+              <path d="M20 12v10H4V12" />
+              <path d="M22 7H2v5h20V7z" /></svg
+            >Vouchers</a
+          >
+        </li>
+      </ul>
+      <div
+        style="
+          border-top: 1px solid var(--border);
+          margin-top: auto;
+          padding-top: 1rem;
+        "
+      >
+        <ul class="admin-nav" style="border: none">
+          <li>
+            <a onclick="goToPage('landing')"
+              ><svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg
+              >View Store</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="admin-content">
+      <h1 class="admin-pg-title">Point of Sale</h1>
+      <p class="admin-sub">Walk-in & in-store orders</p>
+      <div style="margin-bottom: 1rem">
+        <input
+          type="text"
+          class="admin-input"
+          style="max-width: 300px"
+          placeholder="Search products…"
+          oninput="filterPOS(this.value)"
+        />
+      </div>
+      <div class="pos-grid">
+        <div class="pos-scroll">
+          <div class="pos-pg" id="posGrid">
+            {% for product in products %}
+            <div
+              class="pos-tile {% if (product.stock or 0) <= 0 %}out-of-stock{% endif %}"
+              {%
+              if
+              (product.stock
+              or
+              0)
+            >
+              0 %}onclick="posAddItem({{ product.id }})"{% endif %}>
+              <div class="pos-tile-img">
+                {% if product.image_url %}
+                <img
+                  src="{{ product.image_url }}"
+                  alt="{{ product.name }}"
+                  onerror="this.remove()"
+                />
+                {% endif %}
+              </div>
+              <p class="pos-tile-name">{{ product.name }}</p>
+              <p class="pos-tile-price">
+                ₱{{ '%.2f'|format(product.price or 0) }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div id="posReceipt" class="pos-receipt">
+          <p class="pos-receipt-title">Current Order</p>
+          <div style="min-height: 120px">
+            <p
+              style="
+                color: var(--text3);
+                font-size: 0.8rem;
+                text-align: center;
+                padding: 1rem;
+              "
+            >
+              No items added
+            </p>
+          </div>
+          <div class="pos-tot-row"><span>Subtotal</span><span>₱0.00</span></div>
+          <div class="pos-tot-row"><span>Discount</span><span>₱0.00</span></div>
+          <div class="pos-tot-row">
+            <span>Final Total</span><span>₱0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  window.POS_PRODUCTS = {{ products_payload | tojson }};
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderAdminPOS === 'function') renderAdminPOS();
+    if (typeof renderPOSReceipt === 'function') renderPOSReceipt();
+  });
+  function filterPOS(q) {
+    document.querySelectorAll('.pos-tile').forEach(tile => {
+      tile.style.display = tile.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

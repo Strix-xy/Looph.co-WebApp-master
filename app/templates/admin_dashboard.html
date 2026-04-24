@@ -1,0 +1,154 @@
+{% extends 'base.html' %} {% block title %}Admin Dashboard — Looph.co{% endblock
+%} {% block content %}
+<div class="page" id="page-admin_dashboard">
+  <div class="admin-wrap">
+    <div class="admin-sb">
+      <p class="admin-sb-title">Admin Panel</p>
+      <ul class="admin-nav">
+        <li>
+          <a class="active" onclick="goToPage('admin_dashboard')">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" /></svg
+            >Dashboard
+          </a>
+        </li>
+        <li>
+          <a onclick="goToPage('admin_inventory')">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              /></svg
+            >Inventory
+          </a>
+        </li>
+        <li>
+          <a onclick="goToPage('admin_pos')">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" /></svg
+            >POS
+          </a>
+        </li>
+        <li>
+          <a onclick="goToPage('admin_vouchers')">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 12v10H4V12" />
+              <path d="M22 7H2v5h20V7z" />
+              <path d="M12 22V7" />
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" /></svg
+            >Vouchers
+          </a>
+        </li>
+      </ul>
+      <div
+        style="
+          border-top: 1px solid var(--border);
+          margin-top: auto;
+          padding-top: 1rem;
+        "
+      >
+        <ul class="admin-nav" style="border: none">
+          <li>
+            <a onclick="goToPage('landing')">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg
+              >View Store
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="admin-content">
+      <h1 class="admin-pg-title">Dashboard</h1>
+      <p class="admin-sub">Overview — April 2024</p>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div style="height: 2px"></div>
+      <div class="admin-tbl-wrap">
+        <div class="admin-tbl-hd">
+          <h4>Recent Orders</h4>
+          <button class="btn btn-g btn-sm" onclick="exportDashboardReport()">
+            Export PDF
+          </button>
+        </div>
+        <table class="admin-tbl">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th style="text-align: right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="dashOrdersTable">
+            {% for order in recent_orders %}
+            <tr>
+              <td>{{ order.reference }}</td>
+              <td>{{ order.customer_name }}</td>
+              <td>—</td>
+              <td>₱{{ '%.2f'|format(order.total_amount or 0) }}</td>
+              <td>
+                <span class="o-status s-proc"
+                  >{{ (order.status or 'pending')|replace('_',' ')|upper
+                  }}</span
+                >
+              </td>
+              <td>{{ order.created_at_display or '' }}</td>
+              <td style="text-align: right">—</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td
+                colspan="7"
+                style="color: var(--text3); text-align: center; padding: 1rem"
+              >
+                No recent orders yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="app-modal-overlay" id="dashboardMetricOverlay">
+  <div class="app-modal" style="width: min(760px, 95vw)">
+    <h3 id="dashboardMetricTitle">Metric Details</h3>
+    <div
+      id="dashboardMetricBody"
+      style="
+        max-height: 70vh;
+        overflow-y: auto;
+        font-size: 0.84rem;
+        color: var(--text2);
+      "
+    ></div>
+    <div class="app-modal-actions">
+      <button
+        type="button"
+        class="btn btn-g btn-sm"
+        onclick="closeDashboardMetricModal()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+  window.DASHBOARD_RECENT_ORDERS = {{ recent_orders|tojson }};
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderAdminDashboard === 'function') renderAdminDashboard();
+    setInterval(() => {
+      if (document.visibilityState === 'visible' && typeof renderAdminDashboard === 'function') renderAdminDashboard();
+    }, 15000);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>{% block title %}loophco — Everyday Essentials{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}?v=20260416-10"
+    />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <button
+      class="btn btn-g btn-sm"
+      id="backNavBtn"
+      onclick="goBackPage()"
+      style="
+        position: fixed;
+        left: 1rem;
+        bottom: 1rem;
+        z-index: 700;
+        display: inline-flex;
+      "
+    >
+      ← Back
+    </button>
+
+    <!-- CURSOR -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAV -->
+    <nav id="main-nav">
+      <a class="nav-logo" href="{{ url_for('main.index') }}">loophco</a>
+      <ul class="nav-links">
+        <li>
+          <a href="{{ url_for('main.index') }}" data-page="landing">Home</a>
+        </li>
+        <li>
+          <a href="{{ url_for('customer.shop') }}" data-page="shop">Shop</a>
+        </li>
+        <li>
+          <a href="{{ url_for('customer.about') }}" data-page="about">About</a>
+        </li>
+        {% if session.get('user_id') %} {% if session.get('role') == 'admin' %}
+        <li>
+          <a href="{{ url_for('admin.dashboard') }}" data-page="admin_dashboard"
+            >Dashboard</a
+          >
+        </li>
+        {% endif %}
+        <li>
+          <a href="{{ url_for('customer.profile') }}" data-page="profile"
+            >Profile</a
+          >
+        </li>
+        {% else %}
+        <li>
+          <a href="{{ url_for('auth.login') }}" data-page="login">Login</a>
+        </li>
+        {% endif %}
+      </ul>
+      <div class="nav-right">
+        <button
+          class="nav-icon-btn"
+          onclick="toggleSearch()"
+          aria-label="Search"
+        >
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </button>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+          ☀ Light
+        </button>
+        <button class="cart-nav-btn" onclick="toggleCart()">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          Cart <span class="cart-badge" id="cartBadge1">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer">
+      <ul>
+        <li><a href="{{ url_for('main.index') }}">Home</a></li>
+        <li><a href="{{ url_for('customer.shop') }}">Shop</a></li>
+        <li><a href="{{ url_for('customer.about') }}">About</a></li>
+        {% if session.get('user_id') %} {% if session.get('role') == 'admin' %}
+        <li><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('customer.profile') }}">My Account</a></li>
+        <li><a href="{{ url_for('customer.cart') }}">Cart</a></li>
+        {% else %}
+        <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        {% endif %}
+      </ul>
+      <div class="mobile-drawer-btns">
+        <button
+          class="btn btn-g btn-sm"
+          style="flex: 1; justify-content: center"
+          onclick="toggleTheme()"
+        >
+          Toggle Theme
+        </button>
+        <button
+          class="btn btn-p btn-sm"
+          style="flex: 1; justify-content: center"
+          onclick="
+            toggleSearch();
+            toggleMenu();
+          "
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="13"
+            height="13"
+            stroke="currentColor"
+            fill="none"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Search
+        </button>
+      </div>
+    </div>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="searchOverlay">
+      <button class="search-close" onclick="toggleSearch()">✕</button>
+      <div class="search-inner">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search pieces, styles…"
+            oninput="liveSearch(this.value)"
+            autocomplete="off"
+          />
+        </div>
+        <div class="search-tags">
+          <span class="search-tag" onclick="quickSearch('Shirts')">Shirts</span>
+          <span class="search-tag" onclick="quickSearch('Jackets')"
+            >Jackets</span
+          >
+          <span class="search-tag" onclick="quickSearch('Pants')">Pants</span>
+          <span class="search-tag" onclick="quickSearch('Limited')"
+            >Limited</span
+          >
+          <span class="search-tag" onclick="quickSearch('New')"
+            >New Arrivals</span
+          >
+          <span class="search-tag" onclick="quickSearch('accessories')"
+            >Accessories</span
+          >
+        </div>
+        <p class="search-lbl" id="searchLbl">Trending now</p>
+        <div class="search-grid" id="searchGrid"></div>
+      </div>
+    </div>
+
+    <!-- CART OVERLAY -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-sidebar" id="cartSidebar">
+      <div class="cart-hd">
+        <h3>Your Cart</h3>
+        <button
+          style="
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 1.2rem;
+            cursor: pointer;
+          "
+          onclick="toggleCart()"
+        >
+          ✕
+        </button>
+      </div>
+      <div class="cart-body" id="cartBody"></div>
+      <div class="cart-ft" id="cartFt" style="display: none">
+        <div class="csmr">
+          <span>Subtotal</span><span id="cartSubtotal">₱0</span>
+        </div>
+        <div class="csmr"><span>Shipping</span><span>Free</span></div>
+        <div class="csmr tot">
+          <span>Total</span><span id="cartTotal">₱0</span>
+        </div>
+        <button
+          class="checkout-btn"
+          onclick="
+            toggleCart();
+            goToPage('cart');
+          "
+        >
+          View Cart & Checkout
+        </button>
+        <div class="cart-trust">
+          <span>🔒 Secure</span><span>📦 Free Returns</span
+          ><span>💳 GCash OK</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div class="qv-overlay" id="qvOverlay">
+      <div class="qv-modal">
+        <button class="qv-close" onclick="closeQV()">✕</button>
+        <div class="qv-imgs">
+          <img class="qv-main-img" id="qvMainImg" src="" alt="" />
+          <div class="qv-thumbs" id="qvThumbs"></div>
+        </div>
+        <div class="qv-info">
+          <p class="qv-cat" id="qvCat"></p>
+          <h2 class="qv-name" id="qvName"></h2>
+          <div id="qvRating"></div>
+          <div id="qvPriceRow"></div>
+          <p class="qv-desc" id="qvDesc"></p>
+          <div class="qv-actions">
+            <button class="add-btn" id="qvAddBtn">
+              <svg viewBox="0 0 24 24">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              Add to Cart
+            </button>
+            <button class="buy-btn" id="qvBuyBtn">
+              Buy Now — Quick Checkout
+            </button>
+            <div class="qv-trust">
+              <span class="qv-ti"
+                ><svg viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" /></svg
+                >Free shipping over ₱2,000</span
+              >
+              <span class="qv-ti"
+                ><svg viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" /></svg
+                >30-day returns</span
+              >
+              <span class="qv-ti"
+                ><svg viewBox="0 0 24 24">
+                  <polyline points="20 6 9 17 4 12" /></svg
+                >Secure checkout</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-wrap" id="toastWrap"></div>
+    <div class="app-modal-overlay" id="appModalOverlay">
+      <div class="app-modal">
+        <h3 id="appModalTitle">Notice</h3>
+        <p id="appModalMessage"></p>
+        <div class="app-modal-actions">
+          <button type="button" class="btn btn-g btn-sm" id="appModalCancelBtn">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-p btn-sm"
+            id="appModalConfirmBtn"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGES CONTAINER -->
+    {% block content %}{% endblock %}
+
+    <script>
+      window.IS_AUTHENTICATED = {{ 'true' if session.get('user_id') else 'false' }};
+      window.CURRENT_USER_ID = {{ session.get('user_id') if session.get('user_id') else 'null' }};
+      window.ROUTES = {
+        landing: "{{ url_for('main.index') }}",
+        shop: "{{ url_for('customer.shop') }}",
+        about: "{{ url_for('customer.about') }}",
+        login: "{{ url_for('auth.login') }}",
+        register: "{{ url_for('auth.register') }}",
+        cart: "{{ url_for('customer.cart') }}",
+        profile: "{{ url_for('customer.profile') }}",
+        profile_edit: "{{ url_for('customer.edit_profile') }}",
+        admin_dashboard: "{{ url_for('admin.dashboard') }}",
+        admin_inventory: "{{ url_for('admin.inventory') }}",
+        admin_pos: "{{ url_for('admin.pos') }}",
+        admin_vouchers: "{{ url_for('admin.vouchers') }}"
+      };
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const firstPage = document.querySelector('.page');
+        if (firstPage) firstPage.classList.add('active');
+        const path = window.location.pathname;
+        const current = Object.entries(window.ROUTES).find(([, url]) => url === path);
+        if (current) {
+          const key = current[0];
+          document.querySelectorAll('[data-page]').forEach((el) => {
+            el.classList.toggle('active', el.getAttribute('data-page') === key);
+          });
+        } else if (path.startsWith('/product/')) {
+          document.querySelectorAll('[data-page]').forEach((el) => {
+            el.classList.toggle('active', el.getAttribute('data-page') === 'shop');
+          });
+        }
+        // Show back button on all pages except landing
+        const backBtn = document.getElementById('backNavBtn');
+        if (backBtn && path !== window.ROUTES.landing) backBtn.style.display = 'inline-flex';
+        else if (backBtn) backBtn.style.display = 'none';
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('toast') === 'logout') {
+          localStorage.removeItem('looph_cart_guest');
+          localStorage.removeItem('looph_wish_guest');
+        }
+      });
+      function goBackPage() {
+        if (window.history.length > 1) window.history.back();
+        else window.location.href = window.ROUTES.landing;
+      }
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=20260416-10"></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

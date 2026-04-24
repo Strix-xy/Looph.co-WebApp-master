@@ -1,0 +1,216 @@
+{% extends 'base.html' %} {% block title %}Vouchers — Looph.co Admin{% endblock
+%} {% block content %}
+<div class="page" id="page-admin_vouchers">
+  <div class="admin-wrap">
+    <div class="admin-sb">
+      <p class="admin-sb-title">Admin Panel</p>
+      <ul class="admin-nav">
+        <li>
+          <a onclick="goToPage('admin_dashboard')"
+            ><svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" /></svg
+            >Dashboard</a
+          >
+        </li>
+        <li>
+          <a onclick="goToPage('admin_inventory')"
+            ><svg viewBox="0 0 24 24">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              /></svg
+            >Inventory</a
+          >
+        </li>
+        <li>
+          <a onclick="goToPage('admin_pos')"
+            ><svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" /></svg
+            >POS</a
+          >
+        </li>
+        <li>
+          <a class="active" onclick="goToPage('admin_vouchers')"
+            ><svg viewBox="0 0 24 24">
+              <path d="M20 12v10H4V12" />
+              <path d="M22 7H2v5h20V7z" />
+              <path d="M12 22V7" /></svg
+            >Vouchers</a
+          >
+        </li>
+      </ul>
+      <div
+        style="
+          border-top: 1px solid var(--border);
+          margin-top: auto;
+          padding-top: 1rem;
+        "
+      >
+        <ul class="admin-nav" style="border: none">
+          <li>
+            <a onclick="goToPage('landing')"
+              ><svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg
+              >View Store</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="admin-content">
+      <h1 class="admin-pg-title">Vouchers</h1>
+      <p class="admin-sub">Manage discount codes and promotions</p>
+      <div
+        style="
+          display: flex;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+          align-items: flex-start;
+        "
+      >
+        <button
+          class="btn btn-p btn-sm"
+          type="button"
+          onclick="openVoucherModal()"
+        >
+          + New Voucher
+        </button>
+      </div>
+      <div class="admin-tbl-wrap">
+        <table class="admin-tbl">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Type</th>
+              <th>Used</th>
+              <th>Expiry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="voucherTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="app-modal-overlay" id="voucherCreateOverlay">
+  <div class="app-modal" style="width: min(760px, 95vw)">
+    <h3>Create Voucher</h3>
+    <form
+      id="voucherCreateForm"
+      style="
+        display: grid;
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 0.75rem;
+      "
+    >
+      <div>
+        <label class="form-lbl" for="voucherCodeInput">Voucher Code</label>
+        <input
+          type="text"
+          id="voucherCodeInput"
+          class="admin-input"
+          placeholder="e.g. SAVE50"
+          required
+        />
+      </div>
+      <div>
+        <label class="form-lbl" for="voucherTypeInput">Voucher Type</label>
+        <select id="voucherTypeInput" class="admin-input">
+          <option value="min_spend_discount">Min Spend Discount</option>
+          <option value="product_discount">Product Discount</option>
+          <option value="free_delivery">Free Delivery</option>
+          <option value="bogo">BOGO</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-lbl" for="voucherDiscountInput"
+          >Discount Value (₱)</label
+        >
+        <input
+          type="number"
+          id="voucherDiscountInput"
+          step="0.01"
+          min="0"
+          class="admin-input"
+          placeholder="0.00"
+        />
+      </div>
+      <div>
+        <label class="form-lbl" for="voucherMaxUsesInput">Maximum Uses</label>
+        <input
+          type="number"
+          id="voucherMaxUsesInput"
+          min="1"
+          class="admin-input"
+          placeholder="e.g. 100"
+        />
+      </div>
+      <div>
+        <label class="form-lbl" for="voucherMinPurchaseInput"
+          >Minimum Purchase (₱)</label
+        >
+        <input
+          type="number"
+          id="voucherMinPurchaseInput"
+          step="0.01"
+          min="0"
+          class="admin-input"
+          placeholder="0.00"
+        />
+      </div>
+      <div>
+        <label class="form-lbl" for="voucherEndAtInput">Expiry Date</label>
+        <input
+          type="datetime-local"
+          id="voucherEndAtInput"
+          class="admin-input"
+        />
+      </div>
+      <p style="grid-column: 1/-1; font-size: 0.7rem; color: var(--text3)">
+        Tip: Codes are saved in uppercase. Expiry is optional.
+      </p>
+      <div
+        style="
+          grid-column: 1/-1;
+          display: flex;
+          justify-content: flex-end;
+          gap: 0.5rem;
+        "
+      >
+        <button
+          class="btn btn-g btn-sm"
+          type="button"
+          onclick="closeVoucherModal()"
+        >
+          Cancel
+        </button>
+        <button class="btn btn-p btn-sm" type="submit">Create Voucher</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  window.ADMIN_VOUCHERS = [
+    {% for v in vouchers %}
+    {
+      id: {{ v.id }},
+      code: {{ v.code|tojson }},
+      voucher_type: {{ v.voucher_type|tojson }},
+      discount_value: {{ (v.discount_value or 0)|float }},
+      uses: {{ (v.uses or 0)|int }},
+      max_uses: {{ (v.max_uses or 0)|int }},
+      end_at: {{ (v.end_at.isoformat() if v.end_at else '')|tojson }},
+      is_active: {{ 'true' if v.is_active else 'false' }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+  document.addEventListener('DOMContentLoaded', () => { if (typeof renderAdminVouchers === 'function') renderAdminVouchers(); });
+</script>
+{% endblock %}

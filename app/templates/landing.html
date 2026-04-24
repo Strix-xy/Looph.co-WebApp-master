@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% block title %}loophco — Everyday Essentials{% endblock %}
+{% block content %}
+<div class="page active" id="page-landing">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-l">
+      <p class="hero-eyebrow reveal">North — Est. 2026 · Limited Drops</p>
+      <h1 class="hero-title reveal" style="transition-delay:.1s">
+        Dressed<br>for <em>real</em><br><span class="ua">life.</span>
+      </h1>
+      <p class="hero-sub reveal" style="transition-delay:.2s">Capsule pieces built around how you actually move — commute to coffee, morning to evening.</p>
+      <div class="hero-actions reveal" style="transition-delay:.3s">
+        <button class="btn btn-p" onclick="window.location.href='{{ url_for('customer.shop') }}'">Shop the Drop
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <button class="btn btn-g" onclick="window.location.href='{{ url_for('customer.about') }}'">Our Story</button>
+      </div>
+      <div class="hero-stats reveal" style="transition-delay:.4s">
+        <div><div class="hstat-n">2.4K</div><div class="hstat-l">Community</div></div>
+        <div><div class="hstat-n">12</div><div class="hstat-l">Drops</div></div>
+        <div><div class="hstat-n">PH</div><div class="hstat-l">Rooted</div></div>
+      </div>
+    </div>
+    <div class="hero-r">
+      <div class="hero-r-bg">
+        <img src="/static/images/cover-pic.jpg" alt="Looph" onerror="this.style.opacity=0">
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <div class="marquee-item">Everyday Essentials <span class="m-dot"></span></div>
+      <div class="marquee-item">North Roots <span class="m-dot"></span></div>
+      <div class="marquee-item">Mindful Design <span class="m-dot"></span></div>
+      <div class="marquee-item">Real Wear <span class="m-dot"></span></div>
+      <div class="marquee-item">Community First <span class="m-dot"></span></div>
+      <div class="marquee-item">Limited Drops <span class="m-dot"></span></div>
+      <div class="marquee-item">Everyday Essentials <span class="m-dot"></span></div>
+      <div class="marquee-item">North Roots <span class="m-dot"></span></div>
+      <div class="marquee-item">Mindful Design <span class="m-dot"></span></div>
+      <div class="marquee-item">Real Wear <span class="m-dot"></span></div>
+      <div class="marquee-item">Community First <span class="m-dot"></span></div>
+      <div class="marquee-item">Limited Drops <span class="m-dot"></span></div>
+    </div>
+  </div>
+
+  <!-- CAROUSEL -->
+  <section style="padding:clamp(4rem,8vh,8rem) 0;background:var(--bg);overflow:hidden">
+    <div style="padding:0 clamp(1.5rem,4vw,5rem);display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem">
+      <div>
+        <p class="sec-lbl reveal">Featured Collection</p>
+        <h2 class="sec-h reveal" style="margin-bottom:0;transition-delay:.08s">New <em>Arrivals</em></h2>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button class="btn btn-g btn-sm" id="carouselPrev" onclick="shiftCarousel(-1)">←</button>
+        <button class="btn btn-g btn-sm" id="carouselNext" onclick="shiftCarousel(1)">→</button>
+        <button class="btn btn-g btn-sm" onclick="goToPage('shop')" style="margin-left:.35rem">View All →</button>
+      </div>
+    </div>
+    <div style="position:relative;overflow:hidden">
+      <div id="carouselTrack" style="display:flex;transition:transform .55s cubic-bezier(.25,.46,.45,.94);will-change:transform"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:.5rem;margin-top:1.5rem" id="carouselDots"></div>
+  </section>
+
+  <!-- SPLIT 1 -->
+  <section class="split-grid">
+    <div class="split-img reveal-l">
+      <img src="/static/images/home-2.jpg" alt="" onerror="this.parentElement.style.background='var(--bg3)'">
+      <div class="img-tag">Streetwear — Urban Elegance</div>
+    </div>
+    <div class="split-text reveal-r">
+      <p class="sec-lbl">The Philosophy</p>
+      <h2 class="sec-h">Pieces that<br><em>move</em> with you</h2>
+      <p class="sec-body">Every Looph drop is built around real life — breathable fabrics, thoughtful silhouettes, and details that feel even better wearing them.</p>
+      <button class="btn btn-p" onclick="goToPage('shop')">View the Drop
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- SPLIT 2 -->
+  <section class="split-grid" style="direction:rtl">
+    <div class="split-img reveal-r" style="direction:ltr">
+      <img src="/static/images/home-1.jpg" alt="" onerror="this.parentElement.style.background='var(--bg3)'">
+      <div class="img-tag">Community — Join the Movement</div>
+    </div>
+    <div class="split-text reveal-l" style="direction:ltr">
+      <p class="sec-lbl">The Community</p>
+      <h2 class="sec-h">Wear it.<br><em>Live it.</em></h2>
+      <p class="sec-body">Started as pieces made for friends, grown with the people who wear them. Each collection is a snapshot of how our community styles the everyday.</p>
+      <button class="btn btn-g" onclick="goToPage('about')">Read Our Story</button>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <div class="trust-strip">
+    <div class="trust-inner">
+      <div class="trust-item">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="t-text"><p>Free Shipping</p><p>Orders over ₱2,000</p></div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+        <div class="t-text"><p>Free Returns</p><p>30 days no questions</p></div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div class="t-text"><p>Secure Payment</p><p>SSL encrypted</p></div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="t-text"><p>Community Made</p><p>Built with feedback</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALUES -->
+  <section style="padding:clamp(4rem,8vh,8rem) clamp(1.5rem,4vw,5rem);background:var(--bg2)">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <p class="sec-lbl reveal" style="justify-content:center;display:flex">What we stand for</p>
+      <h2 class="sec-h reveal" style="text-align:center;transition-delay:.08s">Built with <em>intention</em></h2>
+    </div>
+    <div class="v-grid">
+      <div class="v-card reveal"><p class="v-num">01</p><span class="v-icon">◈</span><h3 class="v-title">Versatile</h3><p class="v-body">Pieces that layer, mix, and repeat across your week without looking like you tried too hard.</p></div>
+      <div class="v-card reveal" style="transition-delay:.1s"><p class="v-num">02</p><span class="v-icon">◉</span><h3 class="v-title">Quality</h3><p class="v-body">Every fabric and finish is tested in real daily wear. Durability is non-negotiable.</p></div>
+      <div class="v-card reveal" style="transition-delay:.2s"><p class="v-num">03</p><span class="v-icon">◐</span><h3 class="v-title">Community</h3><p class="v-body">Built with the Looph community. Every drop is shaped by real voices.</p></div>
+    </div>
+  </section>
+
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo" onclick="goToPage('landing')">Looph</span>
+      <p class="footer-desc">Everyday pieces designed to move with you. Minimal, comfortable, and ready for real life. Rooted in North.</p>
+      <div class="footer-soc"><a href="https://www.instagram.com/looph.co/" target="_blank" rel="noopener">IG</a></div>
+    </div>
+    <div class="footer-col"><p class="footer-col-title">Shop</p><ul>
+      <li><a onclick="goToPage('shop')">All Products</a></li>
+      <li><a onclick="goToPage('shop')">Shirts</a></li>
+      <li><a onclick="goToPage('shop')">Jackets</a></li>
+      <li><a onclick="goToPage('shop')">Pants</a></li>
+      <li><a onclick="goToPage('shop')">Accessories</a></li>
+    </ul></div>
+    <div class="footer-col"><p class="footer-col-title">Info</p><ul>
+      <li><a onclick="goToPage('about')">About Looph</a></li>
+      <li><a href="{{ url_for('customer.about') }}#sizing-guide">Sizing Guide</a></li>
+      <li><a href="{{ url_for('customer.about') }}#returns">Returns</a></li>
+      <li><a href="{{ url_for('customer.about') }}#faq">FAQ</a></li>
+    </ul></div>
+    <div class="footer-col"><p class="footer-col-title">Contact</p><ul>
+      <li><a>support@looph.co</a></li>
+      <li><a>@looph.co</a></li>
+      <li><a>North, Philippines</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bot">
+    <p>© 2026 loophco — All rights reserved.</p>
+    <span>PH · Everyday Essentials</span>
+  </div>
+</footer>
+</div>
+
+<style>
+.carousel-card{flex-shrink:0;background:var(--bg);cursor:pointer;position:relative;transition:background .3s}
+.carousel-card:hover .pc-inner img{transform:scale(1.06)}
+.carousel-card:hover .pc-hover{opacity:1;transform:translateY(0)}
+</style>
+<script>
+window.SHOP_PRODUCTS = {{ products_payload | tojson }};
+let carouselIdx = 0;
+let carouselItems = [];
+let carouselVisible = 4;
+
+function getCarouselVisible() {
+  if (window.innerWidth < 480) return 1;
+  if (window.innerWidth < 768) return 2;
+  if (window.innerWidth < 1100) return 3;
+  return 4;
+}
+
+window._initCarousel = function initCarousel() {
+  carouselItems = PRODUCTS.filter((p) => Array.isArray(p.imgs) && p.imgs.length && p.imgs[0]);
+  carouselVisible = getCarouselVisible();
+  const track = document.getElementById('carouselTrack');
+  if (!track) return;
+  const cardW = 100 / carouselVisible;
+  track.innerHTML = carouselItems.map((p, i) => {
+    const badgeCls = {new:'b-new',limited:'b-ltd',sale:'b-sale'};
+    const badgeLbl = {new:'New',limited:'Limited',sale:'Sale'};
+    return `<div class="carousel-card" style="width:${cardW}%;flex-shrink:0;padding:1px" onclick="goToProduct(${p.id})">
+      <div style="background:var(--bg)">
+        <div class="pc-img">
+          <div class="pc-inner"><img src="${p.imgs[0]}" alt="${p.name}" loading="lazy" onerror="this.closest('.carousel-card') && this.closest('.carousel-card').remove()"></div>
+          ${p.badge ? `<span class="pc-badge ${badgeCls[p.badge]}">${badgeLbl[p.badge]}</span>` : ''}
+          <div class="pc-hover">
+            <span class="pc-hover-nm">${p.name}</span>
+            <button class="qv-btn" onclick="event.stopPropagation();openQV(${p.id})">Quick View</button>
+          </div>
+        </div>
+        <div class="pc-info">
+          <p class="pc-cat">${p.cat}</p>
+          <h3 class="pc-name">${p.name}</h3>
+          <div class="pc-bot">
+            <span class="pc-price">₱${p.price.toLocaleString()}</span>
+            <div class="pc-stars">${starsHTML(p.rating)}<span class="pc-rc">(${p.reviews})</span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  renderCarouselDots();
+  updateCarouselPos();
+}
+
+function renderCarouselDots() {
+  const dotsEl = document.getElementById('carouselDots');
+  if (!dotsEl) return;
+  const maxIdx = Math.max(0, carouselItems.length - carouselVisible);
+  dotsEl.innerHTML = Array.from({length: maxIdx + 1}, (_, i) =>
+    `<span onclick="goToCarousel(${i})" style="width:${i===carouselIdx?'24px':'8px'};height:8px;border-radius:4px;background:${i===carouselIdx?'var(--accent)':'var(--border2)'};cursor:pointer;transition:all .3s;display:inline-block"></span>`
+  ).join('');
+}
+
+function goToCarousel(i) {
+  const maxIdx = Math.max(0, carouselItems.length - carouselVisible);
+  carouselIdx = Math.min(Math.max(i, 0), maxIdx);
+  updateCarouselPos();
+  renderCarouselDots();
+}
+
+function shiftCarousel(d) { goToCarousel(carouselIdx + d); }
+
+function updateCarouselPos() {
+  const track = document.getElementById('carouselTrack');
+  if (track) track.style.transform = `translateX(-${carouselIdx * (100 / carouselVisible)}%)`;
+}
+
+window.addEventListener('resize', () => {
+  const newVis = getCarouselVisible();
+  if (newVis !== carouselVisible) { carouselVisible = newVis; carouselIdx = 0; updateCarouselPos(); renderCarouselDots(); }
+});
+
+document.addEventListener('DOMContentLoaded', () => { window._initCarousel(); });
+
+// Touch swipe
+let touchStartX = 0;
+document.getElementById && (() => {
+  const t = document.getElementById('carouselTrack');
+  if (!t) return;
+  t.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+  t.addEventListener('touchend', e => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) shiftCarousel(diff > 0 ? 1 : -1); }, {passive:true});
+})();
+</script>
+{% endblock %}

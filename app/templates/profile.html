@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}My Account — loophco{% endblock %}
+{% block content %}
+<div class="page" id="page-profile">
+  <div class="profile-wrap">
+    <div class="profile-sb">
+      <div class="profile-avatar">{{ (user.full_name or user.username or 'U')[:1] }}</div>
+      <p class="profile-name-el">{{ user.full_name or user.username }}</p>
+      <p class="profile-email-el">{{ user.email }}</p>
+      <ul class="profile-nav">
+        <li><a class="active" onclick="showProfileSection('ordersSection',this)">
+          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Orders
+        </a></li>
+        <li><a onclick="showProfileSection('wishSection',this)">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist
+        </a></li>
+        <li><a onclick="goToPage('profile_edit')">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Edit Profile
+        </a></li>
+        <li><a href="#" data-logout-url="{{ url_for('auth.logout') }}" onclick="confirmLogout(event)">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
+        </a></li>
+      </ul>
+    </div>
+    <div class="profile-content">
+      <div id="ordersSection" class="profile-section">
+        <h2 class="profile-sec-title">My Orders</h2>
+        <p class="profile-sec-sub">Your recent purchases</p>
+        <table class="orders-tbl">
+          <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <tbody id="profileOrders"></tbody>
+        </table>
+      </div>
+      <div id="wishSection" class="profile-section" style="display:none">
+        <h2 class="profile-sec-title">Wishlist</h2>
+        <p class="profile-sec-sub">Items you've saved</p>
+        <div class="wish-grid" id="wishlistGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+window.PROFILE_ORDERS = [
+  {% for order in orders %}
+  {
+    id: {{ order.id }},
+    created_at_display: {{ order.to_dict().get('created_at_display')|tojson }},
+    total_amount: {{ (order.total_amount or 0)|float }},
+    status: {{ (order.status or 'processing')|tojson }},
+    items_data: {{ order.to_dict().get('items_data', [])|tojson }}
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+window.PROFILE_WISHLIST = {{ wishlist_products|tojson }};
+document.addEventListener('DOMContentLoaded', () => { if(document.getElementById('page-profile').classList.contains('active')){ renderProfileOrders(); renderWishlistPage(); } });
+</script>
+{% endblock %}

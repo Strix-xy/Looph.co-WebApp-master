@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}About — loophco{% endblock %}
+{% block content %}
+<div class="page" id="page-about">
+  <section class="about-hero">
+    <div class="about-deco"></div>
+    <h1 class="about-title reveal">The story<br>behind <em>Looph.</em></h1>
+    <p class="about-intro reveal" style="transition-delay:.1s">Rooted in North, built by the community. Capsules that feel considered but never overdone — because real life doesn't need to be curated.</p>
+    <div class="about-stats reveal" style="transition-delay:.2s">
+      <div><div class="as-n">2,400+</div><div class="as-l">Community</div></div>
+      <div><div class="as-n">12</div><div class="as-l">Drops</div></div>
+      <div><div class="as-n">100%</div><div class="as-l">Community Driven</div></div>
+    </div>
+  </section>
+
+  <section class="split-grid">
+    <div class="split-img reveal-l">
+      <img src="/static/images/model-1.jpg" alt="" onerror="this.parentElement.style.background='var(--bg3)'">
+      <div class="img-tag">Our Philosophy</div>
+    </div>
+    <div class="split-text reveal-r">
+      <p class="sec-lbl">How It Started</p>
+      <h2 class="sec-h" style="font-size:clamp(2rem,3.5vw,3.5rem)">Pieces you<br>actually <em>reach for.</em></h2>
+      <div class="pull-q">"Started as pieces made for friends."</div>
+      <p class="sec-body" style="max-width:100%">Rooted in North and inspired by the loophco community, we design capsules that feel considered but never overdone. From fabric choice to fit, every drop is built around how you move through real life.</p>
+    </div>
+  </section>
+
+  <section class="split-grid" style="direction:rtl">
+    <div class="split-img reveal-r" style="direction:ltr">
+      <img src="/static/images/model-2.jpg" alt="" onerror="this.parentElement.style.background='var(--bg3)'">
+      <div class="img-tag">The Vision</div>
+    </div>
+    <div class="split-text reveal-l" style="direction:ltr">
+      <p class="sec-lbl">The Looph Vision</p>
+      <h2 class="sec-h" style="font-size:clamp(2rem,3.5vw,3.5rem)">Grown with<br><em>the people.</em></h2>
+      <p class="sec-body" style="max-width:100%">We focus on breathable fabrics, thoughtful silhouettes, and details that photograph well but feel even better in person.</p>
+      <p class="sec-body" style="max-width:100%">Every drop is shaped by real feedback, real fit checks, and real voices from North and beyond.</p>
+      <button class="btn btn-p" onclick="goToPage('shop')">Shop the Latest Drop <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+    </div>
+  </section>
+
+  <section id="sizing-guide" style="padding:3rem clamp(1.5rem,4vw,5rem);background:var(--bg)">
+    <h2 class="sec-h" style="font-size:2rem">Sizing Guide</h2>
+    <p class="sec-body" style="max-width:100%">Tops use standard sizing: S (36-38 chest), M (38-40), L (40-42), XL (42-44). Bottoms use waist sizing 28-36. If between sizes, choose one size up for a relaxed fit.</p>
+  </section>
+  <section id="returns" style="padding:3rem clamp(1.5rem,4vw,5rem);background:var(--bg2)">
+    <h2 class="sec-h" style="font-size:2rem">Returns</h2>
+    <p class="sec-body" style="max-width:100%">Returns are accepted within 30 days for unworn items with original tags. Contact support@looph.co with your order ID to begin. Refunds are processed within 5-7 business days after inspection.</p>
+  </section>
+  <section id="faq" style="padding:3rem clamp(1.5rem,4vw,5rem);background:var(--bg)">
+    <h2 class="sec-h" style="font-size:2rem">FAQ</h2>
+    <p class="sec-body" style="max-width:100%"><strong>Shipping:</strong> Metro areas: 2-4 days, provincial: 4-7 days. <strong>Payments:</strong> COD and GCash are supported. <strong>Order changes:</strong> Allowed within 1 hour after placing order.</p>
+  </section>
+
+  <section style="padding:clamp(4rem,8vh,8rem) clamp(1.5rem,4vw,5rem);background:var(--bg2)">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <p class="sec-lbl reveal" style="display:flex;justify-content:center">Our Values</p>
+      <h2 class="sec-h reveal" style="text-align:center;transition-delay:.08s">What <em>drives</em> us</h2>
+    </div>
+    <div class="v-grid">
+      <div class="v-card reveal"><p class="v-num">◆ 01</p><h3 class="v-title">Versatile</h3><p class="v-body">Pieces that layer, mix, and repeat across your week.</p></div>
+      <div class="v-card reveal" style="transition-delay:.1s"><p class="v-num">◇ 02</p><h3 class="v-title">Quality</h3><p class="v-body">Every fabric and finish tested in real daily wear.</p></div>
+      <div class="v-card reveal" style="transition-delay:.2s"><p class="v-num">◆ 03</p><h3 class="v-title">Community</h3><p class="v-body">Built with the Looph community from feedback to fit checks.</p></div>
+    </div>
+  </section>
+
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo" onclick="goToPage('landing')">Looph</span>
+      <p class="footer-desc">Everyday pieces designed to move with you. Minimal, comfortable, and ready for real life. Rooted in North.</p>
+      <div class="footer-soc"><a href="https://www.instagram.com/looph.co/" target="_blank" rel="noopener">IG</a></div>
+    </div>
+    <div class="footer-col"><p class="footer-col-title">Shop</p><ul>
+      <li><a onclick="goToPage('shop')">All Products</a></li>
+      <li><a onclick="goToPage('shop')">Shirts</a></li>
+      <li><a onclick="goToPage('shop')">Jackets</a></li>
+      <li><a onclick="goToPage('shop')">Pants</a></li>
+      <li><a onclick="goToPage('shop')">Accessories</a></li>
+    </ul></div>
+    <div class="footer-col"><p class="footer-col-title">Info</p><ul>
+      <li><a onclick="goToPage('about')">About Looph</a></li>
+      <li><a href="#sizing-guide">Sizing Guide</a></li>
+      <li><a href="#returns">Returns</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul></div>
+    <div class="footer-col"><p class="footer-col-title">Contact</p><ul>
+      <li><a>support@looph.co</a></li>
+      <li><a>@looph.co</a></li>
+      <li><a>North, Philippines</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bot">
+    <p>© 2026 loophco — All rights reserved.</p>
+    <span>PH · Everyday Essentials</span>
+  </div>
+</footer>
+</div>
+{% endblock %}
